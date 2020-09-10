@@ -12,3 +12,7 @@ spring:
     show-sql: true
   thymeleaf:
     cache: false
+files:
+  storepath:
+    icons:  "//Users//ruaadv7//Documents//GeekBrains//uploads//icons"
+    images: "//Users//ruaadv7//Documents//GeekBrains//uploads//images"

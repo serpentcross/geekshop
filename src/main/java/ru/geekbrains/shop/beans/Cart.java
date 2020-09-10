@@ -44,6 +44,7 @@ public class Cart {
             }
         }
         cartRecords.add(new CartRecord(product));
+        recalculatePrice();
     }
 
     public void removeByProductId(UUID productId) {
