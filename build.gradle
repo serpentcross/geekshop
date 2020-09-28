@@ -2,10 +2,14 @@ plugins {
 	id 'org.springframework.boot' version '2.2.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '1.8.0'
 	id 'no.nils.wsdl2java' version '0.12'
 }
 
 apply plugin: 'no.nils.wsdl2java'
+apply plugin: 'com.google.cloud.tools.jib'
+
+apply from: 'gradle/jib.gradle'
 
 group = 'ru.geekbrains.shop'
 version = '0.0.1'
