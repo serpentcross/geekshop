@@ -1,5 +1,7 @@
 package ru.geekbrains.shop.persistence.entities;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,8 +24,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(description = "Класс описывающий сущность нашего продукта.")
 public class Product extends PersistableEntity {
 
+    @ApiModelProperty(required = true, value = "Название продукта")
     private String title;
     private String description;
     private Date added;

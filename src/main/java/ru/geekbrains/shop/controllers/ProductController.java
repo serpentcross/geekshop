@@ -1,8 +1,13 @@
 package ru.geekbrains.shop.controllers;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,14 +41,17 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/products")
+@Api("Набор методов для витрины онлайн-магазина")
 public class ProductController {
 
     private final ImageService imageService;
@@ -53,6 +61,7 @@ public class ProductController {
 
     private final AmqpTemplate amqpTemplate;
 
+    @ApiOperation(value = "Получить продукт в одном количестве", response = String.class)
     @GetMapping("/{id}")
     public String getOne(Model model, @PathVariable String id) {
 
@@ -103,7 +112,7 @@ public class ProductController {
                 .approved(shopuserOptional.get().getRole().equals(Role.ROLE_ADMIN))
             .build();
 
-            amqpTemplate.convertAndSend("super-shop.exchange","super.shop","User has left review");
+            amqpTemplate.convertAndSend("super-shop.exchange","super.shop","User " + principal.getName() +  " has left review");
 
             reviewService.save(review);
 
@@ -113,5 +122,15 @@ public class ProductController {
         return "redirect:/";
 
     }
+
+//    @RabbitListener(queues = "super-shop.queue")
+//    public void listenTo(Message message) {
+//        try {
+//            String reqMessage = new String(message.getBody(), StandardCharsets.UTF_8);
+//            System.out.println(reqMessage);
+//        } catch (Throwable th) {
+//            log.error("Fatal error: can't process Generated Report response", th);
+//        }
+//    }
 
 }

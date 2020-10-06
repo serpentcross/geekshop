@@ -2,6 +2,7 @@ package ru.geekbrains.shop.controllers;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,10 +34,18 @@ public class ShopController {
     private final ProductService productService;
     private final ShopuserService shopuserService;
 
+    @Value("${supershop.name}")
+    private String shopName;
+
+    @Value("${supershop.city}")
+    private String shopCity;
+
     @GetMapping("/")
     public String index(Model model, @RequestParam(required = false) Integer category) {
         model.addAttribute("cart", cart.getCartRecords());
         model.addAttribute("products", productService.getAll(category));
+        model.addAttribute("shopname", shopName);
+        model.addAttribute("shopcity", shopCity);
         return "index";
     }
 
