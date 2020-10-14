@@ -43,4 +43,8 @@ public class ReviewService {
         }
     }
 
+    public List<Review> getAll() {
+        return reviewRepository.findAll();
+    }
+
 }
