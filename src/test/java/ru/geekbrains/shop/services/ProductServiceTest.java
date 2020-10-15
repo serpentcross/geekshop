@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.geekbrains.shop.dto.ProductDto;
 import ru.geekbrains.shop.persistence.entities.enums.ProductCategory;
 import ru.geekbrains.shop.services.feign.clients.ShopFeignClient;
+import ru.geekbrains.shop.services.notification.MailService;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +22,9 @@ public class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @MockBean
+    private MailService mailService;
 
     @MockBean
     private ShopFeignClient shopFeignClient;
