@@ -2,12 +2,10 @@ package ru.geekbrains.shop.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,31 +16,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import ru.geekbrains.shop.dto.ProductDto;
-import ru.geekbrains.shop.dto.ReviewDto;
-import ru.geekbrains.shop.exceptions.ProductNotFoundException;
 import ru.geekbrains.shop.persistence.entities.Image;
 import ru.geekbrains.shop.persistence.entities.Product;
 import ru.geekbrains.shop.persistence.entities.Review;
-import ru.geekbrains.shop.persistence.entities.Shopuser;
-import ru.geekbrains.shop.persistence.entities.enums.Role;
 import ru.geekbrains.shop.services.ImageService;
 import ru.geekbrains.shop.services.ProductService;
 import ru.geekbrains.shop.services.ReviewService;
-import ru.geekbrains.shop.services.ShopuserService;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,9 +45,6 @@ public class ProductController {
     private final ImageService imageService;
     private final ProductService productService;
     private final ReviewService reviewService;
-    private final ShopuserService shopuserService;
-
-    private final AmqpTemplate amqpTemplate;
 
     @ApiOperation(value = "Получить продукт в одном количестве", response = String.class)
     @GetMapping("/{id}")
@@ -93,34 +78,6 @@ public class ProductController {
     public String addOne(@RequestParam("image") MultipartFile image, ProductDto productDto) throws IOException {
         Image img = imageService.uploadImage(image, productDto.getTitle());
         return productService.save(productDto, img);
-    }
-
-    @PostMapping("/reviews")
-    public String addReview(ReviewDto reviewDto, HttpSession httpSession, Principal principal) {
-
-        Optional<Product> productOptional = productService.getOneById(reviewDto.getProductId());
-        Optional<Shopuser> shopuserOptional = shopuserService.findByPhone(principal.getName());
-
-        Product product;
-
-        if (productOptional.isPresent() && shopuserOptional.isPresent()) {
-            product = productOptional.get();
-            Review review = Review.builder()
-                .commentary(reviewDto.getCommentary())
-                .product(product)
-                .shopuser(shopuserOptional.get())
-                .approved(shopuserOptional.get().getRole().equals(Role.ROLE_ADMIN))
-            .build();
-
-            amqpTemplate.convertAndSend("super-shop.exchange","super.shop","User " + principal.getName() +  " has left review");
-
-            reviewService.save(review);
-
-            return "redirect:/products/" + product.getId();
-        }
-
-        return "redirect:/";
-
     }
 
 //    @RabbitListener(queues = "super-shop.queue")

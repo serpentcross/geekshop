@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ru.geekbrains.shop.persistence.entities.Review;
+import ru.geekbrains.shop.services.ProductService;
 import ru.geekbrains.shop.services.ReviewService;
 import ru.geekbrains.shop.services.ShopuserService;
 import ru.geekbrains.shop.services.feign.clients.ShopFeignClient;
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,6 +33,12 @@ public class ReviewControllerMVCTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private AmqpTemplate amqpTemplate;
+
+    @MockBean
+    private ProductService productService;
 
     @MockBean
     private ReviewService reviewServiceMock;

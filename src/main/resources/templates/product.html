@@ -55,7 +55,7 @@
         </div>
         <hr>
         <div class="container" style="text-align: center" sec:authorize="isAuthenticated()">
-            <form action="#" th:action="@{/products/reviews}" method="POST">
+            <form action="#" th:action="@{/reviews}" method="POST">
                 <div class="form-row row justify-content-center">
                     <div class="form-group col-md-9">
                         <textarea class="form-control" name="commentary" rows="5" style="resize: none;" placeholder="Введите ваш отзыв"></textarea>
